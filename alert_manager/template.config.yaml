@@ -1,0 +1,12 @@
+global:
+  slack_api_url: '${WEBHOOK}'
+
+route:
+  receiver: 'slack'
+
+receivers:
+  - name: 'slack'
+    slack_configs:
+    - channel: '#alerts'
+      text: "{{ .CommonAnnotations.summary }}"
+      send_resolved: true

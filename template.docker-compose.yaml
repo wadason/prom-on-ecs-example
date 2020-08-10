@@ -1,0 +1,27 @@
+version: '2'
+services:
+  prometheus:
+    build: 
+      context: ./
+      dockerfile: ./_prom.dockerfile
+    ports:
+      - '9090:9090'
+    command:
+      - /bin/sh
+      - -c
+      - |
+        envsubst < /etc/prometheus/template.prometheus.yml > /etc/prometheus/prometheus.yml
+        /bin/prometheus --config.file=/etc/prometheus/prometheus.yml --web.console.libraries=/usr/share/prometheus/console_libraries --web.console.templates=/usr/share/prometheus/consoles
+    environment:
+      AWS_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+      
+  alertmanager:
+    build: 
+      context: ./
+      dockerfile: ./_alert.dockerfile
+    ports:
+      - 9093:9093
+    command: "--config.file=/etc/alertmanager/config.yaml"
+    restart: always
